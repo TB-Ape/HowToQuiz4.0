@@ -5,10 +5,18 @@ import { TextInput } from "react"
 function GameP(props) {
     const [answer, setAnswer] = useState("");
     const [buttondis, setButtonDis] = useState(false);
+    const [answers2, setAnswers2] = useState([]);
+    useEffect(() => {
+        props.socket.on("answers2", (data) => {
+            setAnswers2(data.answers);
+        });
+    }, []);
     function sendAnswer() {
         props.socket.emit("Answer", { roomCode: props.roomCode, answer: answer, player: props.player });
         setButtonDis(true);
+
     };
+    if (answers2.length ===0) {
         return (<div>
             <text>
                 <div>
@@ -31,6 +39,18 @@ function GameP(props) {
             </text>
         </div>
         );
+    }
+    else
+        return(
+        <div>
+                {answers2.map((answer, index) => (
+                <div>
+                        <button key={index}>{answer}</button>'
+                </div>
+            ))}
+        </div>
+        );
+
 
 }
 export default GameP;
