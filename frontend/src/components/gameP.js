@@ -7,7 +7,7 @@ function GameP(props) {
     const [buttondis, setButtonDis] = useState(false);
     const [answers2, setAnswers2] = useState([]);
     useEffect(() => {
-        props.socket.on("answers2", (data) => {
+        props.socket.on("Answers2", (data) => {
             setAnswers2(data.answers);
         });
     }, []);
@@ -16,6 +16,9 @@ function GameP(props) {
         setButtonDis(true);
 
     };
+    function sendAnswer2(answer) {
+        props.socket.emit("Answer2", {roomCode: props.roomCode, answer: answer, player: props.player})
+    }
     if (answers2.length ===0) {
         return (<div>
             <text>
@@ -44,9 +47,9 @@ function GameP(props) {
         return(
         <div>
                 {answers2.map((answer, index) => (
-                <div>
-                        <button key={index}>{answer}</button>'
-                </div>
+                    <div key={index}>
+                        <button onClick={() => sendAnswer2(answer)}>{answer}</button>
+                    </div>
             ))}
         </div>
         );

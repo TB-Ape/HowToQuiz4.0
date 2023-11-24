@@ -29,7 +29,8 @@ async function insertRoom(RoomCode) {
         currentRound: -1,
         currentTurn: -1,
         currentArticle: null,
-        playerAnswers: []
+        playerAnswers: [],
+        playerAnswers2: []
     });
     await newRoom.save();
     return newRoom;
@@ -50,11 +51,12 @@ async function removePlayerbyS(socketid) {
         Room.players.pull({ socketId: socketid });
     }
 }
-async function getPlayers(roomCode) {
+async function getPlayersUsernames(roomCode) {
     room = await roomModel.findOne({ code: roomCode });
     const usernames = await room.players.map(player => player.username);
     return usernames;
 }
+
 async function addPlayerToRoom(username, roomCode,socket) {
     Room = await roomModel.findOne({ 'code': roomCode });
     newPlayer = await insertNewPlayer(username,socket.id);
@@ -71,12 +73,32 @@ async function addPlayerToRoom(username, roomCode,socket) {
 
 async function prepareNewRound(socket,roomCode) {
     //getArticle 
-    socket.to()
     const article = await getRandomArticle();
     console.log(article);
+    room = await roomModel.findOne({ code: roomCode });
+    room.currentArticle = article;
+    room.save();
     socket.to(roomCode).emit("image", { image: article.image });
     
    //sendFormularToPersonalScreen
+}
+
+function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex > 0) {
+
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
 }
 async function getRandomArticle() {
     articles = await articleModel.aggregate(
@@ -127,6 +149,53 @@ async function getPlayersCount(roomCode) {
         throw error;
     }
 }
+async function getPlayerAnswers2Count(roomCode) {
+    try {
+        const result = await roomModel.aggregate([
+            { $match: { code: roomCode } },
+            { $project: { playerAnswers2Count: { $size: "$player2Answers" } } }
+        ]);
+
+        if (result.length > 0) {
+            return result[0].playerAnswers2Count;
+        } else {
+            // Room not found
+            return 0;
+        }
+    } catch (error) {
+        console.error("Error getting player answers2 count:", error);
+        throw error;
+    }
+}
+async function prepareTurn2(socket, roomCode) {
+    //getPlayerAnswers
+    room = await roomModel.findOne({ 'code': roomCode });
+    playerAnswers = room.playerAnswers;
+
+    //getRealAnswer
+    article = await room.currentArticle;
+    const players = await room.players;
+    for (const player of players) {
+        var answersToShow = [];
+        for (answer of playerAnswers) {
+            if (answer.player != player) { answersToShow.push(answer.answer) }
+        }
+        answersToShow.push(article.title);
+        console.log('socket.id: ', socket.id);
+        console.log('socketid: ', player.socketId);
+        shuffledAnswers = await shuffle(answersToShow);
+        io.to(player.socketId).emit("Answers2", { answers: shuffledAnswers });
+    }
+}
+async function insertAnswers2(roomCode,player,answer) {
+    room = await roomModel.findOne({ code: roomCode });
+    await room.playerAnswers2.push({ player: player, answer: answer });
+}
+
+async function calcPoints(socket, roomCode, player, answer) {
+    room = await roomModel.findOne({ code: roomCode });
+    
+}
 io.on('connection', (socket) => {
     console.log(`⚡: ${socket.id} user just connected!`);
 
@@ -136,7 +205,7 @@ io.on('connection', (socket) => {
         socket.join(data.roomCode);
         socket.emit("logged_in", { loggedin: "true", player: player});
         console.log("data: ", data);
-        const Players = await getPlayers(data.roomCode);
+        const Players = await getPlayersUsernames(data.roomCode);
         console.log("PlayerList", { Players });
         socket.to(data.roomCode).emit("updatePlayers", { players: Players });
     });
@@ -163,9 +232,13 @@ io.on('connection', (socket) => {
         AnswerCount = await getPlayerAnswersCount(data.roomCode);
         PlayerCount = await getPlayersCount(data.roomCode);
 
-        if (0 <= PlayerCount - AnswerCount)
-            console.log("start turn2");
+        if (0 === PlayerCount - AnswerCount)
+            prepareTurn2(socket,data.roomCode);
     })
+    socket.on("Answer2", async (data) => {
+        insertAnswers2(data.roomCode, data.player, data.answer);
+
+    });
 });
 server.listen(3001, () => {
     console.log("listening on *:3001");
