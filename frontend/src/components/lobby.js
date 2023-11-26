@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import GameS from "./gameS"
+import { useParams } from "react-router-dom"
 function Lobby(props) {
     const [playerList, setPlayerList] = useState([]);
     const [roomCode, setRoomCode] = useState([]);
+    
     const [gameStarted, setGameStarted] = useState(false);
     const [image, setImage] = useState("");
+
+    const roomparam = useParams();
+
     function getRoomId() {
         props.socket.emit("requestRoomCode");
     }

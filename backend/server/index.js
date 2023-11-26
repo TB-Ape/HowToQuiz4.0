@@ -16,7 +16,7 @@ const articleModel = require("../models/article");
 const playerModel = require("../models/player");
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
+    cors: { origin: ["https://game.tbape.net", "http://localhost:3000"], methods: ["GET", "POST"] },
 });
 
 
@@ -153,7 +153,7 @@ async function getPlayerAnswers2Count(roomCode) {
     try {
         const result = await roomModel.aggregate([
             { $match: { code: roomCode } },
-            { $project: { playerAnswers2Count: { $size: "$player2Answers" } } }
+            { $project: { playerAnswers2Count: { $size: "$playerAnswers2" } } }
         ]);
 
         if (result.length > 0) {
@@ -190,11 +190,44 @@ async function prepareTurn2(socket, roomCode) {
 async function insertAnswers2(roomCode,player,answer) {
     room = await roomModel.findOne({ code: roomCode });
     await room.playerAnswers2.push({ player: player, answer: answer });
+    await room.save();
 }
 
-async function calcPoints(socket, roomCode, player, answer) {
-    room = await roomModel.findOne({ code: roomCode });
-    
+async function calcPoints(socket, roomCode) {
+    const room = await roomModel.findOne({ code: roomCode });
+    const players = room.players;
+    const playerAnswers = room.playerAnswers;
+    const playerAnswers2 = room.playerAnswers2;
+
+    for (const entry2 of playerAnswers2) {
+        var match = null;
+        // Loop through each entry in playerAnswers
+        for (const entry1 of playerAnswers) {
+            // Compare the answers
+            if (entry1.answer === entry2.answer) {
+                // Do something when there's a match
+                console.log(`Match found: ${entry1.answer}`);
+                match = entry1;
+            }
+        }
+        console.log('match: ', match);
+        if (match === null) {
+            console.log('entry2: ', entry2);
+            const Winner = await room.players.find(player => player._id.equals(entry2.player._id));
+            console.log('winner: ', Winner);
+            Winner.score = Winner.score + 10;
+            room.save();
+            Winner.save();
+        }
+        else {
+            console.log('match: ', match);
+            const Winner = await room.players.find(player => player._id.equals(match.player._id));
+            console.log('winner: ', Winner);
+            Winner.score = Winner.score + 10;
+            room.save();
+            Winner.save();
+        }
+    }
 }
 io.on('connection', (socket) => {
     console.log(`⚡: ${socket.id} user just connected!`);
@@ -236,8 +269,15 @@ io.on('connection', (socket) => {
             prepareTurn2(socket,data.roomCode);
     })
     socket.on("Answer2", async (data) => {
-        insertAnswers2(data.roomCode, data.player, data.answer);
-
+        console.log("answer2 recieved", data);
+        await insertAnswers2(data.roomCode, data.player, data.answer);
+            
+        AnswerCount = await getPlayerAnswers2Count(data.roomCode);
+        console.log("Answer2 count:", AnswerCount);
+        PlayerCount = await getPlayersCount(data.roomCode);
+        console.log("Player count:", PlayerCount);
+        if (0 === PlayerCount - AnswerCount)
+            calcPoints(socket, data.roomCode);
     });
 });
 server.listen(3001, () => {

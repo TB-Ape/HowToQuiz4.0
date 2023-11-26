@@ -5,9 +5,10 @@
     "\\backend\\models",
     "\\backend\\server",
     "\\frontend",
+    "\\frontend\\public",
     "\\frontend\\src",
     "\\frontend\\src\\components"
   ],
-  "SelectedNode": "\\frontend\\src\\components\\gameP.js",
+  "SelectedNode": "\\backend\\server\\index.js",
   "PreviewInSolutionExplorer": false
 }

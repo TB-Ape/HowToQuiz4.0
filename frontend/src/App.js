@@ -11,10 +11,9 @@ import {
     Route
 } from "react-router-dom";
 const socket = io.connect("http://localhost:3001");
-    
 function App() {
     const [username, setUsername] = useState("");
-
+    const [roomCode, setRoomCode] = useState("");
     function sendUsername() {
         console.log("Button clicked");
         socket.emit("send_username", { username: username});
@@ -26,7 +25,9 @@ function App() {
         <BrowserRouter>
         <Routes>
                 <Route path="/" element={<Personal socket={socket} />} />
+                <Route path="/:room" element={<Personal socket={socket} />} />
                 <Route path="/shared" element={<Lobby socket={socket} />} />
+                <Route path="/shared/:room" element={<Lobby socket={socket} />}/>
         </Routes>
         </BrowserRouter>
         )

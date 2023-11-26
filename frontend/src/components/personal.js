@@ -3,12 +3,13 @@ import { TextInput } from "react"
 import Login from "./login"
 import Host from "./host"
 import GameP from "./gameP"
-
+import { useParams } from "react-router-dom"
 function Personal(props) {
     const [loggedIn, setloggedIn] = useState(false);
     const [isHost, setIsHost] = useState(false);
     const [isGameStarted, setIsGameStarted] = useState(false);
     const [roomCode, setRoomCode] = useState("");
+    const roomparam = useParams();
     const [username, setUserName] = useState("")
     const [player, setPlayer] = useState("");
     useEffect(() => {
