@@ -1,0 +1,35 @@
+.join-form {
+    text-align: center;
+    max-width: 400px;
+    margin: auto;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+    /* Add style for disabled button */
+    button:disabled {
+        background-color: #CCCCCC; /* Change to the color you prefer for disabled state */
+        cursor: not-allowed;
+    }

@@ -6,17 +6,17 @@ const { Schema } = mongoose;
 const roomSchema = new Schema({
     code: String,
     host: playerSchema,
-    players: [playerSchema],
+    players: [{ type: Schema.Types.ObjectId, ref: 'player' }],
     rounds: Number,
     currentRound: Number,
     currentTurn: Number,
     currentArticle: articleSchema,
     playerAnswers: [{
-        player: { type: playerSchema },
+        player: { type: Schema.Types.ObjectId, ref: 'player' },
         answer: { type: String }
     }],
     playerAnswers2: [{
-        player: { type: playerSchema },
+        player: { type: Schema.Types.ObjectId, ref: 'player' },
         answer: { type: String }
     }]
 });

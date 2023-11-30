@@ -8,10 +8,14 @@ import { render } from "react-dom";
 import {
     BrowserRouter,
     Routes,
-    Route
+    Route,
+    useParams
 } from "react-router-dom";
+
 const socket = io.connect("http://localhost:3001");
+//const socket = io.connect("https://b.tbape.net");
 function App() {
+    let { params } = useParams();
     const [username, setUsername] = useState("");
     const [roomCode, setRoomCode] = useState("");
     function sendUsername() {
@@ -27,7 +31,7 @@ function App() {
                 <Route path="/" element={<Personal socket={socket} />} />
                 <Route path="/:room" element={<Personal socket={socket} />} />
                 <Route path="/shared" element={<Lobby socket={socket} />} />
-                <Route path="/shared/:room" element={<Lobby socket={socket} />}/>
+                <Route path="/shared/:room" element={<Lobby socket={socket} params={params} />}/>
         </Routes>
         </BrowserRouter>
         )

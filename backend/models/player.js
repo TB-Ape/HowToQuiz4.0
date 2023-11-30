@@ -4,7 +4,8 @@ const playerSchema = new Schema({
     username: String,
     socketId: String,
     score: Number,
-    present: Boolean
+    present: Boolean,
+    isHost: Boolean
 });
 
 module.exports = mongoose.model("Player", playerSchema);

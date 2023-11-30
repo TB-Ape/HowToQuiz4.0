@@ -1,0 +1,42 @@
+﻿.game-info-section {
+    text-align: center;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.game-title {
+    font-size: 24px;
+    color: #333;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.room-info,
+.players-info {
+    flex: 1;
+}
+
+.room-code {
+    font-size: 36px;
+    color: #4CAF50;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+    ul li {
+        margin-bottom: 5px;
+    }
+
+/* Add styles for the Result and GameS components if needed */

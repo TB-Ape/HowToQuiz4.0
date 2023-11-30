@@ -1,21 +1,31 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import GameS from "./gameS"
-import { useParams } from "react-router-dom"
+import Result from "./results"
+import { useParams } from "react-router-dom";
+import './lobby.css'
 function Lobby(props) {
+    const params = useParams();
     const [playerList, setPlayerList] = useState([]);
-    const [roomCode, setRoomCode] = useState([]);
+    const [roomCode, setRoomCode] = useState("");
     
     const [gameStarted, setGameStarted] = useState(false);
     const [image, setImage] = useState("");
-
-    const roomparam = useParams();
+    const [gameOver, setGameOver] = useState(false);
 
     function getRoomId() {
-        props.socket.emit("requestRoomCode");
+        setRoomCode(params.room);
+        if (params.room == "" || params.room == null) {
+            props.socket.emit("requestRoomCode");
+        }
+        else {
+            props.socket.emit("RoomCode", { roomCode: params.room });
+        }
+            
     }
-
+    
     useEffect(() => {
+
         getRoomId();
 
         props.socket.on("send_RoomCode", (data) => {
@@ -36,24 +46,48 @@ function Lobby(props) {
         props.socket.on("gameStart", (data) => {
             console.log("gameStart");
             setGameStarted(true);
+            setGameOver(false);
         });
 
+        props.socket.on("gameOver", (data) => {
+            console.log("gameOver");
+            setGameOver(true);
+        });
     }, []);
-    if (!gameStarted) 
-        return (
-            <>
-                <h1>Room Code:</h1>
-                <h1>{roomCode}</h1>
-                <h1>Players:</h1>
-                <ul>
-                    {playerList.map((players, index) => (
-                        <li key={index}>{players}</li>
-                    ))}
-                </ul>
-            </>
-        );
-    else
-        return <GameS socket={props.socket} />
+    return(
+        <div className="game-info-section">
+            
+            {!gameStarted && !gameOver ? (
+                <><div>
+                    <h1 className="game-title">WIKIHOW GAME</h1>
+                </div>
+                <div className="game-info">
+
+                        <div className="room-info">
+                            <h2>Room Code:</h2>
+                            <h1 className="room-code">{roomCode}</h1>
+                        </div>
+                        <div className="players-info">
+                            <h2>Players:</h2>
+                            <ul>
+                                {playerList.map((player, index) => (
+                                    <li key={index}>
+                                        {player.isHost && '👑'} {player.username}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div></>
+            ) : (
+                gameOver ? (
+                    <Result socket={props.socket} players={playerList} />
+                ) : (
+                    <GameS socket={props.socket} players={playerList} />
+                )
+            )}
+        </div>
+
+    )
 }
 
 export default Lobby;

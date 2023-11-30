@@ -1,0 +1,43 @@
+.waiting-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.waiting-content {
+    text-align: center;
+    background-color: #f7f7f7; /* WikiHow color scheme */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+p {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.loading-spinner {
+    border: 6px solid rgba(128, 128, 128, 0.3); /* WikiHow color scheme */
+    border-left: 6px solid #4CAF50; /* WikiHow color scheme */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: auto; /* Center the spinner */
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+/* Add style for disabled button */
+button:disabled {
+    background-color: #CCCCCC; /* Change to the color you prefer for disabled state */
+    cursor: not-allowed;
+}
