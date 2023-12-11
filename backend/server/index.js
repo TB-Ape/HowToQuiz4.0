@@ -198,7 +198,7 @@ async function prepareTurn2(socket, roomCode) {
     for (const player of players) {
         var answersToShow = [];
         for (answer of playerAnswers) {
-            if (answer.player != player) { answersToShow.push(answer.answer) }
+            if (answer.player != player.id) { answersToShow.push(answer.answer) }
         }
         answersToShow.push(article.title);
         console.log('socket.id: ', socket.id);
