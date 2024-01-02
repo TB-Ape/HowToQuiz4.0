@@ -1,3 +1,3 @@
 devServer: {
-    allowedHosts: "all"
+    allowedHosts: 'auto' | 'all' | Array[string]
 }

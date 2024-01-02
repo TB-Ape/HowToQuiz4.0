@@ -1,9 +1,14 @@
 .start-game-button {
     text-align: center;
     margin-top: 20px;
+    
+    
 }
-
-button {
+.start-game {
+    text-align: center;
+    margin-top: 20px;
+}
+.button {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
@@ -11,4 +16,57 @@ button {
     cursor: pointer;
     border: none;
     border-radius: 5px;
+    margin-bottom: 01%;
+    width: 10px;
+
 }
+.buttons {
+    width:fit-content;
+}
+/* Add this CSS for toggle switch styling */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    margin-top: 10px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 20px;
+    transition: 0.4s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+input:checked + .toggle-slider {
+    background-color: #4CAF50;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+

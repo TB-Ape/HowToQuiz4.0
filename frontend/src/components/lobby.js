@@ -27,7 +27,7 @@ function Lobby(props) {
     useEffect(() => {
 
         getRoomId();
-
+        window.history.replaceState(null, "New Page Title", roomCode)
         props.socket.on("send_RoomCode", (data) => {
             setRoomCode(data.roomCode);
         });

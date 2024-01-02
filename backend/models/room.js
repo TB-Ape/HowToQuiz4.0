@@ -11,6 +11,7 @@ const roomSchema = new Schema({
     currentRound: Number,
     currentTurn: Number,
     currentArticle: articleSchema,
+    showRealAnswer: Boolean,
     playerAnswers: [{
         player: { type: Schema.Types.ObjectId, ref: 'player' },
         answer: { type: String }

@@ -15,9 +15,10 @@ mongoose.connect("mongodb://localhost:27017/wikihow2", {
 const roomModel = require("../models/room");
 const articleModel = require("../models/article");
 const playerSchema= require("../models/player");
+const room = require("../models/room");
 
 const playerModel = mongoose.model('player', playerSchema.schema);
-var Rounds = 2;
+var Rounds = 5;
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -34,6 +35,7 @@ async function insertRoom(RoomCode) {
         currentRound: 0,
         currentTurn: -1,
         currentArticle: new articleModel(),
+        showRealAnswer: true,
         playerAnswers: [],
         playerAnswers2: []
     });
@@ -58,12 +60,12 @@ async function removePlayerbyS(socketid) {
     }
 }
 async function getPlayersUsernames(roomCode) {
-    room = await getRoom(roomCode);
+    var room = await getRoom(roomCode);
     const usernames = await room.players.map(player => player.username);
     return usernames;
 }
 async function getPlayers(roomCode) {
-    room = await getRoom(roomCode);
+    var room = await getRoom(roomCode);
     const players = await room.players;
     return players;
 }
@@ -93,7 +95,7 @@ async function prepareNewRound(socket,roomCode) {
     await clearAnswers(roomCode);
     const article = await getRandomArticle();
     console.log(article);
-    room = await getRoom(roomCode);
+    var room = await getRoom(roomCode);
     room.currentArticle = article;
     room.currentTurn = 1;
     room.currentRound = room.currentRound + 1;
@@ -128,7 +130,7 @@ async function getRandomArticle() {
     return articles[0];
 }
 async function insertAnswer(roomCode, player,answer) {
-    room = await getRoom(roomCode);
+    var room = await getRoom(roomCode);
     await room.playerAnswers.push({ player: player, answer: answer });
     await room.save();
 }
@@ -200,7 +202,9 @@ async function prepareTurn2(socket, roomCode) {
         for (answer of playerAnswers) {
             if (answer.player != player.id) { answersToShow.push(answer.answer) }
         }
-        answersToShow.push(article.title);
+        if(room.showRealAnswer == true){
+            answersToShow.push(article.title);
+        }
         console.log('socket.id: ', socket.id);
         console.log('socketid: ', player.socketId);
         shuffledAnswers = await shuffle(answersToShow);
@@ -208,7 +212,7 @@ async function prepareTurn2(socket, roomCode) {
     }
 }
 async function insertAnswers2(roomCode,player,answer) {
-    room = await getRoom(roomCode);
+    var room = await getRoom(roomCode);
     await room.playerAnswers2.push({ player: player, answer: answer });
     await room.save();
 }
@@ -252,6 +256,12 @@ async function calcPoints(socket, roomCode) {
             await Winner.save();
         }
     }
+}
+async function setShowRealAnswer(roomCode,show)
+{
+    var room = await getRoom(roomCode);
+    room.showRealAnswer = show;
+    await room.save();
 }
 async function clearAnswers(roomcode)
 {
@@ -323,6 +333,7 @@ io.on('connection', (socket) => {
     socket.on("gameStartRequest", async (data) => {
         console.log("gameStart");
         io.in(data.roomCode).emit("gameStart");
+        await setShowRealAnswer(data.roomCode,data.showRealAnswer);
         await prepareNewRound(socket,data.roomCode);
     });
     socket.on('disconnect', () => {
@@ -342,7 +353,7 @@ io.on('connection', (socket) => {
     socket.on("Answer2", async (data) => {
         console.log("answer2 recieved", data);
         await insertAnswers2(data.roomCode, data.player, data.answer);
-            
+        var room = await getRoom(data.roomCode);
         AnswerCount = await getPlayerAnswers2Count(data.roomCode);
         console.log("Answer2 count:", AnswerCount);
         PlayerCount = await getPlayersCount(data.roomCode);
@@ -371,6 +382,7 @@ io.on('connection', (socket) => {
         await resetScores(data.roomCode);
         const Players = await getPlayers(data.roomCode);
         socket.to(data.roomCode).emit("updatePlayers", { players: Players });
+        await setShowRealAnswer(data.roomCode,data.showRealAnswer);
         await prepareNewRound(socket, data.roomCode);
     });
         
