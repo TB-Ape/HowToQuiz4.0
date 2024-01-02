@@ -290,7 +290,11 @@ async function resetScores(roomcode) {
     
     await room.save();
 }
-
+async function setRounds(rounds, roomCode){
+    var room = await getRoom(roomCode);
+    room.rounds = rounds;
+    await room.save();
+}
 
 io.on('connection', (socket) => {
     console.log(`⚡: ${socket.id} user just connected!`);
@@ -330,12 +334,7 @@ io.on('connection', (socket) => {
             socket.emit("send_RoomCode", { roomCode: room.code });
         }
     });
-    socket.on("gameStartRequest", async (data) => {
-        console.log("gameStart");
-        io.in(data.roomCode).emit("gameStart");
-        await setShowRealAnswer(data.roomCode,data.showRealAnswer);
-        await prepareNewRound(socket,data.roomCode);
-    });
+
     socket.on('disconnect', () => {
      //   removePlayerbyS(socket.id);
         console.log(`🔥: ${socket.id} disconnected`);
@@ -382,10 +381,21 @@ io.on('connection', (socket) => {
         await resetScores(data.roomCode);
         const Players = await getPlayers(data.roomCode);
         socket.to(data.roomCode).emit("updatePlayers", { players: Players });
+        setRounds(data.rounds,data.roomCode);
         await setShowRealAnswer(data.roomCode,data.showRealAnswer);
         await prepareNewRound(socket, data.roomCode);
+
+
     });
         
+    socket.on("gameStartRequest", async (data) => {
+        console.log("gameStart");
+        io.in(data.roomCode).emit("gameStart");
+        setRounds(data.rounds,data.roomCode);
+        await setShowRealAnswer(data.roomCode,data.showRealAnswer);
+        await prepareNewRound(socket,data.roomCode);
+
+    });
 });
 server.listen(3001,'0.0.0.0', () => {
     console.log("listening on *:3001");
