@@ -28,6 +28,16 @@ function Personal(props) {
         }
     });
     useEffect(() => {
+        const unloadCallback = (event) => {
+          event.preventDefault();
+          event.returnValue = "";
+          return "";
+        };
+      
+        window.addEventListener("beforeunload", unloadCallback);
+        return () => window.removeEventListener("beforeunload", unloadCallback);
+      }, []);
+    useEffect(() => {
         props.socket.on("isHost", (data) => {
             setIsHost(data.isHost);
         });
