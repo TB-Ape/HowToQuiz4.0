@@ -29,7 +29,7 @@ function App() {
         <BrowserRouter>
         <Routes>
                 <Route path="/" element={<Personal socket={socket} />} />
-                <Route path="/:room" element={<Personal socket={socket} />} />
+                <Route path="/:room" element={<Personal socket={socket} params={params}/>} />
                 <Route path="/shared" element={<Lobby socket={socket} />} />
                 <Route path="/shared/:room" element={<Lobby socket={socket} params={params} />}/>
         </Routes>

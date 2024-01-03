@@ -10,7 +10,7 @@ function Personal(props) {
     const [isHost, setIsHost] = useState(false);
     const [isGameStarted, setIsGameStarted] = useState(false);
     const [roomCode, setRoomCode] = useState("");
-    const roomparam = useParams();
+    const params = useParams();
     const [username, setUserName] = useState("")
     const [player, setPlayer] = useState("");
     const [errorMessage, setErrorMessage] = useState('');
@@ -19,6 +19,9 @@ function Personal(props) {
     function startNewGame() {
         props.socket.emit("startNewGame");
     }
+    
+
+
     props.socket.on("logged_in", (data) => {
         if (data.loggedin === true) {
             setPlayer(data.player);
@@ -28,6 +31,9 @@ function Personal(props) {
         }
     });
     useEffect(() => {
+        if (params.room != "" || params.room != null) {
+            setRoomCode(params.room)
+        }
         const unloadCallback = (event) => {
           event.preventDefault();
           event.returnValue = "";
