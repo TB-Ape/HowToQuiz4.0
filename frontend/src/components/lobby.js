@@ -1,67 +1,84 @@
 ﻿import { useEffect, useState } from "react";
-import { Socket } from "socket.io-client";
-import GameS from "./gameS"
-import Result from "./results"
-import { useParams } from "react-router-dom";
-import './lobby.css'
 import QRCode from "react-qr-code";
+import Intermission from "./intermission";
+import GameS from "./gameS";
+import Result from "./results";
+import { useParams } from "react-router-dom";
+import './lobby.css';
+
 function Lobby(props) {
     const params = useParams();
     const [playerList, setPlayerList] = useState([]);
     const [roomCode, setRoomCode] = useState("");
-    
     const [gameStarted, setGameStarted] = useState(false);
-    const [image, setImage] = useState("");
     const [gameOver, setGameOver] = useState(false);
+    const [intermission, setIntermission] = useState(false);
     const [QrUrl, setQrUrl] = useState("");
+    const [roundResults,setRoundResults] = useState([]);
+    const [image, setImage] = useState("");
     function getRoomId() {
         setRoomCode(params.room);
         setQrUrl("game.tbape.net/" + roomCode);
         if (params.room == "" || params.room == null) {
             props.socket.emit("requestRoomCode");
-        }
-        else {
+        } else {
             props.socket.emit("RoomCode", { roomCode: params.room });
         }
     }
-    useEffect(() => {
 
+    useEffect(() => {
         getRoomId();
+
         props.socket.on("send_RoomCode", (data) => {
             setRoomCode(data.roomCode);
             setQrUrl("game.tbape.net/" + data.roomCode);
         });
 
         props.socket.on("updatePlayers", (data) => {
-            console.log(data.players);
-
-            // Check if data.players is an array before mapping
             if (Array.isArray(data.players)) {
                 setPlayerList(data.players);
             } else {
-                // Handle the case where data.players is not an array
                 console.error("Received non-array data for players:", data.players);
             }
         });
 
         props.socket.on("gameStart", (data) => {
-            console.log("gameStart");
             setGameStarted(true);
             setGameOver(false);
+            setIntermission(false);
         });
 
         props.socket.on("gameOver", (data) => {
-            console.log("gameOver");
             setGameOver(true);
+            setIntermission(false);
+            
         });
+
+        props.socket.on("roundOver", (data) => {
+            setIntermission(true);
+            setRoundResults(data.roundResults);
+        });
+
+        props.socket.on("roundStart", (data) => {
+            setIntermission(false);
+        });
+        props.socket.on("nextRound",(data) =>{
+            setIntermission(false);
+        })
     }, []);
     useEffect(() => {
-             window.history.replaceState(null, "New Page Title", "/shared/" + roomCode); 
+        props.socket.on("image", (data) => {
+            setImage(data.image);
+        });
+    }, [props.socket]);
+    useEffect(() => {
+        window.history.replaceState(null, "New Page Title", "/shared/" + roomCode);
     }, [roomCode]);
-    return(
+
+    return (
         <div className="game-info-section">
             
-            {!gameStarted && !gameOver ? (
+            {!gameStarted && !gameOver && !intermission ? (
                 <><div>
                     <h1 className="game-title">WIKIHOW GAME</h1>
                 </div>
@@ -91,13 +108,18 @@ function Lobby(props) {
                         </div>
                     </div></>
             ) : (
-                gameOver ? (
-                    <Result socket={props.socket} players={playerList} />
+                intermission ? (
+                    <Intermission socket={props.socket} players={playerList} roundResults ={roundResults} image={image} />
                 ) : (
-                    <GameS socket={props.socket} players={playerList} />
+                    gameOver ? (
+                        <Result socket={props.socket} players={playerList} />
+                    ) : (
+                        <GameS socket={props.socket} players={playerList} image={image}/>
+                    )
                 )
             )}
         </div>
+        
 
     )
 }

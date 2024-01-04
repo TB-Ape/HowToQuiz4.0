@@ -4,11 +4,14 @@ import './host.css';
 function Host(props) {
     const [showRealAnswer, setShowRealAnswer] = useState(true);
     const [rounds, setRounds] = useState(5); // Default number of rounds is 1
-
+    const [buttondis, setButtondis] =useState(false);
     function handleCheckboxChange() {
         setShowRealAnswer(!showRealAnswer);
     }
-
+    function startnewRound(){
+        setButtondis(true);
+        props.socket.emit("newRoundRequest",{ roomCode: props.roomCode});
+    }
     function handleRoundsChange(event) {
         const newRounds = parseInt(event.target.value, 10);
         setRounds(newRounds);
@@ -23,8 +26,8 @@ function Host(props) {
         props.socket.emit("NewGameStartRequest", { roomCode: props.roomCode, showRealAnswer: showRealAnswer, rounds: rounds });
         console.log("gameStart clicked");
     }
-
-    return (
+    if(!props.intermission)
+        return (
         <div className="start-game">
             <div className="start-game-button">
                 {/* Your button content goes here */}
@@ -45,7 +48,13 @@ function Host(props) {
                 <input type="number" className="round-selector" value={rounds} onChange={handleRoundsChange} min="1"/>
             </div>
         </div>
-    );
+    )
+    else 
+        return (
+        <div>
+            <button onClick={startnewRound} disabled={buttondis}>"Start new Round</button> 
+        </div>)
+        
 }
 
 export default Host;

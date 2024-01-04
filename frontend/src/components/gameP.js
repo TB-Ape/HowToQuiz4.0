@@ -17,13 +17,13 @@ function GameP(props) {
         });
     }, []);
     function sendAnswer() {
-        props.socket.emit("Answer", { roomCode: props.roomCode, answer: answer, player: props.player });
         setButtonDis(true);
-
+        props.socket.emit("Answer", { roomCode: props.roomCode, answer: answer, player: props.player });
     };
     function sendAnswer2(answer) {
-        props.socket.emit("Answer2", { roomCode: props.roomCode, answer: answer, player: props.player })
         setButtonDis(true);
+        props.socket.emit("Answer2", { roomCode: props.roomCode, answer: answer, player: props.player })
+        
     }
     return(
     <div className="answer-section">

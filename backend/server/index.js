@@ -226,6 +226,7 @@ async function calcPoints(socket, roomCode) {
     const players = room.players;
     const playerAnswers = room.playerAnswers;
     const playerAnswers2 = room.playerAnswers2;
+    const pointDetails = [];
 
     for (const entry2 of playerAnswers2) {
         var match = null;
@@ -240,23 +241,51 @@ async function calcPoints(socket, roomCode) {
         }
         console.log('match: ', match);
         if (match === null) {
+            //Right Answer
             console.log('entry2: ', entry2);
             const Winner = await room.players.find(player => player._id.equals(entry2.player._id));
             console.log('winner: ', Winner);
             Winner.score = await Winner.score + 10;
             await room.save();
             await Winner.save();
+            const playerAnswer = await findPlayerAnswer(roomCode,Winner._id);
+            console.log(entry2.answer + " is the right answer?")
+            pointDetails.push({ player: Winner, answer: entry2.answer, points: 10, playerAnswer: playerAnswer, from: "correct Answer",correctAnswer: entry2.answer });
+
         }
         else {
+            //Player Answer
             console.log('match: ', match);
             const Winner = await room.players.find(player => player._id.equals(match.player._id));
             console.log('winner: ', Winner);
             Winner.score = await Winner.score + 10;
             await room.save();
             await Winner.save();
+            const playerAnswer = await findPlayerAnswer(roomCode,Winner._id);
+            const giver = await room.players.find(player => player._id.equals(entry2.player._id));
+            console.log(Winner.username + " gets 10 Points from", giver.username +" ?");
+            pointDetails.push({ player: Winner, answer: entry2.answer, points: 10, playerAnswer: playerAnswer, from: giver.username, correctAnswer: entry2.answer});
+
         }
     }
+    return pointDetails;
 }
+async function findPlayerAnswer(roomCode, playerId) {
+    try {
+      const room = await getRoom(roomCode);
+      
+      if (!room) {
+        return null; // Room not found
+      }
+  
+      const playerAnswer = room.playerAnswers.find(answer => answer.player.equals(playerId));
+  
+      return playerAnswer;
+    } catch (error) {
+      console.error('Error finding player answer:', error);
+      return null;
+    }
+  }
 async function setShowRealAnswer(roomCode,show)
 {
     var room = await getRoom(roomCode);
@@ -295,7 +324,12 @@ async function setRounds(rounds, roomCode){
     room.rounds = rounds;
     await room.save();
 }
-
+async function startNextRound(socket,roomCode)
+{
+    io.to(roomCode).emit("nextRound");
+    await prepareNewRound(socket, roomCode);
+    
+}
 io.on('connection', (socket) => {
     console.log(`⚡: ${socket.id} user just connected!`);
 
@@ -358,7 +392,7 @@ io.on('connection', (socket) => {
         PlayerCount = await getPlayersCount(data.roomCode);
         console.log("Player count:", PlayerCount);
         if (0 === PlayerCount - AnswerCount) {
-            await calcPoints(socket, data.roomCode);
+            const roundResults = await calcPoints(socket, data.roomCode);
             const Players = await getPlayers(data.roomCode);
             console.log(Players);
             socket.to(data.roomCode).emit("updatePlayers", { players: Players });
@@ -369,8 +403,8 @@ io.on('connection', (socket) => {
                 
             }
             else {
-                await prepareNewRound(socket, data.roomCode);
-                io.to(data.roomCode).emit("nextRound");
+                socket.to(data.roomCode).emit("roundOver",{roundResults: roundResults});
+                socket.emit("roundOver",{roundResults: roundResults});
             }
         }
     });
@@ -387,7 +421,9 @@ io.on('connection', (socket) => {
 
 
     });
-        
+    socket.on("NewRoundStartRequest", async (data)=> {
+        socket.to(data.roomCode).emit("roundStart");
+    });  
     socket.on("gameStartRequest", async (data) => {
         console.log("gameStart");
         io.in(data.roomCode).emit("gameStart");
@@ -395,6 +431,10 @@ io.on('connection', (socket) => {
         await setShowRealAnswer(data.roomCode,data.showRealAnswer);
         await prepareNewRound(socket,data.roomCode);
 
+    });
+    socket.on("newRoundRequest", async (data) =>{
+        console.log("start new round");
+        startNextRound(socket,data.roomCode);
     });
 });
 server.listen(3001,'0.0.0.0', () => {
