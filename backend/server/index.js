@@ -330,9 +330,7 @@ async function startNextRound(socket,roomCode)
     await prepareNewRound(socket, roomCode);
     
 }
-io.on('connection', (socket) => {
-    console.log(`⚡: ${socket.id} user just connected!`);
-
+function handleConnection(socket){
     socket.on("send_credentials", async (data) => {
         console.log("Credentials: ", data);
         player = await addPlayerToRoom(data.username, data.roomCode, socket);
@@ -364,7 +362,7 @@ io.on('connection', (socket) => {
             socket.emit("send_RoomCode", { roomCode: "Wrong Room Code" });
         }
         else {
-            socket.join(RoomCode);
+            socket.join(roomCode);
             socket.emit("send_RoomCode", { roomCode: room.code });
         }
     });
@@ -380,8 +378,10 @@ io.on('connection', (socket) => {
         AnswerCount = await getPlayerAnswersCount(data.roomCode);
         PlayerCount = await getPlayersCount(data.roomCode);
 
-        if (0 === PlayerCount - AnswerCount)
+        if (0 === PlayerCount - AnswerCount){
             prepareTurn2(socket, data.roomCode);
+        }
+        socket.to(data.roomCode).emit("answered",{player: data.player});
     });
     socket.on("Answer2", async (data) => {
         console.log("answer2 recieved", data);
@@ -422,7 +422,7 @@ io.on('connection', (socket) => {
 
     });
     socket.on("NewRoundStartRequest", async (data)=> {
-        socket.to(data.roomCode).emit("roundStart");
+        socket.emit(data.roomCode).emit("roundStart");
     });  
     socket.on("gameStartRequest", async (data) => {
         console.log("gameStart");
@@ -436,7 +436,9 @@ io.on('connection', (socket) => {
         console.log("start new round");
         startNextRound(socket,data.roomCode);
     });
-});
+}
+io.on('connection', handleConnection);
+
 server.listen(3001,'0.0.0.0', () => {
     console.log("listening on *:3001");
 });

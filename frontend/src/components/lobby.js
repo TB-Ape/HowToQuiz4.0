@@ -76,18 +76,25 @@ function Lobby(props) {
     }, [roomCode]);
 
     return (
-        <div className="game-info-section">
+
+
+        
             
-            {!gameStarted && !gameOver && !intermission ? (
-                <><div>
+            !gameStarted && !gameOver && !intermission ? (
+                <div className="lobby-container">
+                     <ul className="player-list">
+                                {playerList.map((player, index) => (
+                                    <li key={index} className="player-item">
+                                        {player.isHost && '👑'} {player.username}
+                                    </li>
+                                ))}
+                            </ul>
+                <div className="game-info-section">
+                <div>
                     <h1 className="game-title">WIKIHOW GAME</h1>
                 </div>
                 <div className="game-info">
 
-                        <div className="room-info">
-                            <h2>Room Code:</h2>
-                            <h1 className="room-code">{roomCode}</h1>
-                        </div>
                         <div className = "QRINFO" >
                             <QRCode
                                 size={256}
@@ -95,18 +102,14 @@ function Lobby(props) {
                                 value={QrUrl}
                                 viewBox={`0 0 256 256`}
                              />
+                             <div className="room-info">
+                             <h2>Room Code:</h2>
+                            <h1 className="room-code">{roomCode}</h1>
+                            </div>
                         </div>
-                        <div className="players-info">
-                            <h2>Players:</h2>
-                            <ul>
-                                {playerList.map((player, index) => (
-                                    <li key={index}>
-                                        {player.isHost && '👑'} {player.username}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div></>
+                    </div>
+                    </div>
+                    </div>
             ) : (
                 intermission ? (
                     <Intermission socket={props.socket} players={playerList} roundResults ={roundResults} image={image} />
@@ -117,8 +120,9 @@ function Lobby(props) {
                         <GameS socket={props.socket} players={playerList} image={image}/>
                     )
                 )
-            )}
-        </div>
+            )
+        
+
         
 
     )

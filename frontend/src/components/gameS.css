@@ -1,12 +1,75 @@
-﻿.game-screen-section {
+﻿.game-container {
+    display: flex;
+}
+
+
+
+.player-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    left: 0;
+    top: 25%;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    padding: 20px;
+}
+
+.player-item {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #fff;
+    background-color: #b9b9b9;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Dramatic bounce effect */
+    animation: pulse 1s infinite; /* Pulse animation */
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+@keyframes lastpulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+.player-item.answered {
+    background-color: #4CAF50; /* Change to green for answered players */
+     animation: lastpulse 1s;
+}
+
+
+.game-screen-section {
     text-align: center;
     max-width: 600px;
     margin: auto;
     padding: 20px;
-    background-color: #4CAF50; /* Light background color similar to Wikihow */
+    background-color: #4CAF50;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Light shadow for contrast */
-    color: #222; /* Dark text color for contrast */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    color: #222;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .section-header {
@@ -15,26 +78,25 @@
 
 .section-title {
     font-size: 28px;
-    color: #808080; /* Blue accent color similar to Wikihow */
+    color: #808080;
 }
 
 .game-image img {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Slightly more pronounced shadow for image */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
-.player-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+.instruction {
+    transition: opacity 1s ease-in-out;
 }
 
-.player-item {
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #555; /* Slightly dark text color for contrast */
+.instruction.choose-answer {
+    opacity: 1;
 }
 
-/* Add additional styles as needed */
+.instruction.type-answer {
+    opacity: 1;
+    animation: lastpulse 1s;
+}

@@ -1,19 +1,64 @@
-import React from "react";
-import "./intermission.css"; // Import the CSS file
+// Intermission.js
+
+import React, { useEffect, useRef, useState } from "react";
+import "./intermission.css";
 
 function Intermission({ socket, players, roundResults, image }) {
-  const firstResult = roundResults[0];
+  const [pointsAnimations, setPointsAnimations] = useState([]);
+
+  const animatePoints = () => {
+    const animations = [];
+
+    roundResults.forEach((result, index) => {
+      const pointsText = `${result.points} Pts from ${result.from}`;
+
+      animations.push(
+        setTimeout(() => {
+          setPointsAnimations((prevAnimations) => [
+            ...prevAnimations,
+            { username: result.player.username, pointsText },
+          ]);
+        }, index * 2000) // 2000ms (2 seconds) delay between animations
+      );
+    });
+
+    // Clear timeouts when component unmounts
+    return () => animations.forEach((animation) => clearTimeout(animation));
+  };
+
+  useEffect(() => {
+    // Trigger animation for point details after component mounts
+    animatePoints();
+
+    // Cleanup function to clear timeouts when component unmounts
+    return () => setPointsAnimations([]);
+  }, []);
+
   return (
     <div className="intermission-section">
-      <h1>Round Results</h1>
-      <h2>{firstResult.correctAnswer}</h2>
+      <h1 className="round-results">Round Results</h1>
+      <h2>{roundResults[0].correctAnswer}</h2>
       <div className="game-image">
         <img className="game-image" src={image} alt="Game Screen" />
       </div>
-      <ul>
+      <ul className="player-details">
         {roundResults.map((result, index) => (
-          <li key={index}>
-            <p>{result.player.username} : {result.playerAnswer.answer} | {result.points} Pts from {result.from}</p>
+          <li key={index} className="player-item">
+            <p>
+              <span className="point-details">
+                {result.player.username}
+              </span>
+            </p>
+            {pointsAnimations.map((animation, animationIndex) =>
+              animationIndex === index ? (
+                <div
+                  key={animationIndex}
+                  className="point-popup animate-points"
+                >
+                  +{animation.pointsText}
+                </div>
+              ) : null
+            )}
           </li>
         ))}
       </ul>

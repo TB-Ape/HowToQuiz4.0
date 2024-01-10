@@ -57,6 +57,7 @@ function Personal(props) {
         props.socket.on("gameOver", (data) => {
             setGameOver(true);
             setIntermission(false);
+            setGameStarted(false);
             
         });
         props.socket.on("nextRound", (data) => {
