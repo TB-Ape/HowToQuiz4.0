@@ -26,67 +26,20 @@
 }
 
 .player-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  position: fixed;
+  left: 0;
+  top: 25%;
+  transform: translateY(-50%);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  padding: 20px;
 }
 
-.player-item {
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #555; /* Slightly dark text color for contrast */
-}
-
-/* Add additional styles as needed */
-
-/* Add the previous styles here */
-
-.point-popup {
-  position: absolute;
-  padding: 5px;
-  background-color: #4CAF50; /* Light background color similar to Wikihow */
-  border-radius: 5px;
-  color: #fff; /* Text color for contrast */
-  font-size: 14px;
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-/* Additional animation for individual points */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Add the previous styles here */
-
-.point-popup {
-  position: absolute;
-  padding: 5px;
-  background-color: #4CAF50; /* Light background color similar to Wikihow */
-  border-radius: 5px;
-  color: #fff; /* Text color for contrast */
-  font-size: 14px;
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-/* Additional animation for individual points */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.player-item.intermission {
+  background-color: #4CAF50; /* Change to green for answered players */
+  animation: lastpulse 0s;
 }
