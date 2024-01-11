@@ -15,7 +15,6 @@ mongoose.connect("mongodb://localhost:27017/wikihow2", {
 const roomModel = require("../models/room");
 const articleModel = require("../models/article");
 const playerSchema= require("../models/player");
-const room = require("../models/room");
 
 const playerModel = mongoose.model('player', playerSchema.schema);
 var Rounds = 5;
@@ -226,8 +225,7 @@ async function calcPoints(socket, roomCode) {
     const players = room.players;
     const playerAnswers = room.playerAnswers;
     const playerAnswers2 = room.playerAnswers2;
-    const pointDetails = [];
-
+    const pointDetails  = [];
     for (const entry2 of playerAnswers2) {
         var match = null;
         // Loop through each entry in playerAnswers
@@ -250,7 +248,7 @@ async function calcPoints(socket, roomCode) {
             await Winner.save();
             const playerAnswer = await findPlayerAnswer(roomCode,Winner._id);
             console.log(entry2.answer + " is the right answer?")
-            pointDetails.push({ player: Winner, answer: entry2.answer, points: 10, playerAnswer: playerAnswer, from: "correct Answer",correctAnswer: entry2.answer });
+            pointDetails.push({ player: Winner, answer: entry2.answer, points: 10, playerAnswer: playerAnswer, from: "correct Answer",correctAnswer: room.currentArticle.title });
 
         }
         else {
@@ -264,12 +262,42 @@ async function calcPoints(socket, roomCode) {
             const playerAnswer = await findPlayerAnswer(roomCode,Winner._id);
             const giver = await room.players.find(player => player._id.equals(entry2.player._id));
             console.log(Winner.username + " gets 10 Points from", giver.username +" ?");
-            pointDetails.push({ player: Winner, answer: entry2.answer, points: 10, playerAnswer: playerAnswer, from: giver.username, correctAnswer: entry2.answer});
+            pointDetails.push({ player: Winner, answer: entry2.answer, points: 10, playerAnswer: playerAnswer, from: giver.username, correctAnswer: room.currentArticle.title});
 
         }
     }
     return pointDetails;
 }
+async function getArticleById(articleId) {
+    try {
+      // Validate that the provided articleId is a valid ObjectId
+      if (!mongoose.Types.ObjectId.isValid(articleId)) {
+        throw new Error('Invalid ObjectId');
+      }
+  
+      // Find the article by ObjectId
+      const article = await Article.findById(articleId);
+  
+      if (!article) {
+        throw new Error('Article not found');
+      }
+  
+      return article;
+    } catch (error) {
+      console.error('Error getting article by ObjectId:', error);
+      throw error;
+    }
+  }
+  
+  // Example usage
+  const articleId = '63d989413b704cbfb9e7511f';
+  getArticleById(articleId)
+    .then((article) => {
+      console.log('Found Article:', article);
+    })
+    .catch((error) => {
+      console.error('Error:', error.message);
+    });
 async function findPlayerAnswer(roomCode, playerId) {
     try {
       const room = await getRoom(roomCode);
