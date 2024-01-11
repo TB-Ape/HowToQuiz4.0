@@ -55,8 +55,12 @@
 .player-item.answered {
     background-color: #4CAF50; /* Change to green for answered players */
      animation: lastpulse 1s;
+     
 }
-
+.player-item.answered2 {
+    background-color: #4CAF50; /* Change to green for answered players */
+     animation: lastpulse 1s;
+}
 
 .game-screen-section {
     text-align: center;

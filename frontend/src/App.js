@@ -12,8 +12,8 @@ import {
     useParams
 } from "react-router-dom";
 
-//const socket = io.connect("http://localhost:3001");
-const socket = io.connect("https://b.tbape.net");
+const socket = io.connect("http://localhost:3001");
+//const socket = io.connect("https://b.tbape.net");
 function App() {
     let { params } = useParams();
     const [username, setUsername] = useState("");

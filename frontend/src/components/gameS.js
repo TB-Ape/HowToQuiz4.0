@@ -3,6 +3,7 @@ import './gameS.css';
 
 function GameS(props) {
     const [answeredPlayers, setAnsweredPlayers] = useState([]);
+    const [answered2Players, setAnswered2Players] = useState([]);
     const [showChooseAnswerText, setShowChooseAnswerText] = useState(true);
 
     useEffect(() => {
@@ -11,20 +12,33 @@ function GameS(props) {
             setAnsweredPlayers((prevAnsweredPlayers) => [...prevAnsweredPlayers, data.player]);
         };
 
-        props.socket.on("answered", handleAnswered);
+        const handleAnswered2 = (data) => {
+            console.log("data received: ", data);
+            setAnswered2Players((prevAnswered2Players) => [...prevAnswered2Players, data.player]);
+        };
 
-        // Cleanup the socket event listener when the component unmounts
+        props.socket.on("answered", handleAnswered);
+        props.socket.on("answered2", handleAnswered2);
+
+        // Cleanup the socket event listeners when the component unmounts
         return () => {
             props.socket.off("answered", handleAnswered);
+            props.socket.off("answered2", handleAnswered2);
         };
+
     }, [props.socket]);
 
-    // Log the updated array whenever it changes
+    // Log the updated arrays whenever they change
     useEffect(() => {
-        console.log("Updated array:", answeredPlayers);
-        // Update the state to trigger the transition effect
+        console.log("Updated answeredPlayers array:", answeredPlayers);
         setShowChooseAnswerText(answeredPlayers.length !== props.players.length);
     }, [answeredPlayers, props.players]);
+
+    useEffect(() => {
+        console.log("Updated answered2Players array:", answered2Players);
+        // Update the state to trigger the transition effect
+        setShowChooseAnswerText(answered2Players.length !== props.players.length);
+    }, [answered2Players, props.players]);
 
     return (
         <div className="game-container">
@@ -32,7 +46,7 @@ function GameS(props) {
                 {props.players.map((player, index) => (
                     <li
                         key={index}
-                        className={`player-item ${answeredPlayers.some(answeredPlayer => answeredPlayer.socketId === player.socketId) ? "answered" : ""}`}
+                        className={`player-item ${answeredPlayers.some(answeredPlayer => answeredPlayer.socketId === player.socketId) ? "answered" : ""} ${answered2Players.some(answered2Player => answered2Player.socketId === player.socketId) ? "answered2" : ""}`}
                     >
                         {player.isHost && '👑'} {player.username} - {player.score}
                     </li>

@@ -42,6 +42,30 @@ ul {
 ul li {
         margin-bottom: 5px;
 }
+
+@keyframes lastpulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 .player-list {
     list-style-type: none;
     padding: 0;
@@ -69,6 +93,11 @@ ul li {
 }
 /* Add styles for the Result and GameS components if needed */
 .player-item.answered {
+    background-color: #4CAF50; /* Change to green for answered players */
+     animation: pulse 1s infinite ;
+}
+
+.player-item.answered2 {
     background-color: #4CAF50; /* Change to green for answered players */
      animation: lastpulse 1s;
 }

@@ -407,6 +407,7 @@ function handleConnection(socket){
                 socket.emit("roundOver",{roundResults: roundResults});
             }
         }
+        socket.to(data.roomCode).emit("answered2",{player: data.player});
     });
     socket.on("NewGameStartRequest", async (data) => {
         console.log('start new Game');
