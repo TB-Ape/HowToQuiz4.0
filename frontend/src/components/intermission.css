@@ -49,3 +49,25 @@
     margin-top: 10px;
     color: #fff;
   }
+/* Add this to your existing CSS or modify it accordingly */
+.show-animation {
+    animation: showAnimation 1s;
+  }
+  
+  @keyframes showAnimation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(2);
+    }
+    100% {
+        transform: scale(1);
+    }
+  }
+  
+  .animation-text {
+    color: #ffcc00; /* Customize the color of the animation text */
+    font-size: 14px;
+  }
+  
