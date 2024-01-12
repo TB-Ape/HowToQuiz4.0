@@ -52,7 +52,7 @@ function Host(props) {
     else 
         return (
         <div>
-            <button onClick={startnewRound} disabled={buttondis}>"Start new Round</button> 
+            <button onClick={startnewRound} disabled={buttondis}>Start new Round</button> 
         </div>)
         
 }

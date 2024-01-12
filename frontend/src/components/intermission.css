@@ -39,7 +39,4 @@
   padding: 20px;
 }
 
-.player-item.intermission {
-  background-color: #4CAF50; /* Change to green for answered players */
-  animation: lastpulse 0s;
-}
+

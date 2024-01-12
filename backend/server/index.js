@@ -90,6 +90,7 @@ async function addPlayerToRoom(username, roomCode, socket) {
 }
 
 async function prepareNewRound(socket,roomCode) {
+
     //getArticle 
     await clearAnswers(roomCode);
     const article = await getRandomArticle();
@@ -249,7 +250,7 @@ async function calcPoints(socket, roomCode) {
             const playerAnswer = await findPlayerAnswer(roomCode,Winner._id);
             console.log(entry2.answer + " is the right answer?")
             pointDetails.push({ player: Winner, answer: entry2.answer, points: 10, playerAnswer: playerAnswer, from: "correct Answer",correctAnswer: room.currentArticle.title });
-
+            
         }
         else {
             //Player Answer
@@ -431,8 +432,10 @@ function handleConnection(socket){
                 
             }
             else {
+                const playerAnswers = await room.playerAnswers;
                 socket.to(data.roomCode).emit("roundOver",{roundResults: roundResults});
                 socket.emit("roundOver",{roundResults: roundResults});
+                socket.to(data.roomCode).emit("playerAnswers",{playerAnswers: playerAnswers});
             }
         }
         socket.to(data.roomCode).emit("answered2",{player: data.player});

@@ -15,6 +15,7 @@ function Lobby(props) {
     const [intermission, setIntermission] = useState(false);
     const [QrUrl, setQrUrl] = useState("");
     const [roundResults,setRoundResults] = useState([]);
+    const [playerAnswers, setPlayerAnswers] = useState([]);
     const [image, setImage] = useState("");
     function getRoomId() {
         setRoomCode(params.room);
@@ -56,9 +57,12 @@ function Lobby(props) {
 
         props.socket.on("roundOver", (data) => {
             setIntermission(true);
+
             setRoundResults(data.roundResults);
         });
-
+        props.socket.on("playerAnswers", (data) => {
+            setPlayerAnswers(data.userAnswers);
+        });
         props.socket.on("roundStart", (data) => {
             setIntermission(false);
         });
@@ -112,7 +116,7 @@ function Lobby(props) {
                     </div>
             ) : (
                 intermission ? (
-                    <Intermission socket={props.socket} players={playerList} roundResults ={roundResults} image={image} />
+                    <Intermission socket={props.socket} players={playerList} roundResults ={roundResults} image={image} playerAnswers ={playerAnswers} />
                 ) : (
                     gameOver ? (
                         <Result socket={props.socket} players={playerList} />
