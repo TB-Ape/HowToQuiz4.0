@@ -378,7 +378,8 @@ function handleConnection(socket){
         }
     });
     socket.on("requestRoomCode", (data) => {
-        RoomCode = nanoid(5);
+        var nRoomCode = nanoid(5);
+        RoomCode = nRoomCode.toUpperCase();
         insertRoom(RoomCode);
         socket.join(RoomCode);
         socket.emit("send_RoomCode", { roomCode: RoomCode });

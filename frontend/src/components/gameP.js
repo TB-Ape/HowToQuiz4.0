@@ -25,6 +25,16 @@ function GameP(props) {
         props.socket.emit("Answer2", { roomCode: props.roomCode, answer: answer, player: props.player })
         
     }
+    useEffect(()=>{
+        if(answer.length <= 0)
+        {
+            setButtonDis(true);
+        }
+        else
+        {
+            setButtonDis(false);
+        }
+    },[answer]);
     return(
     <div className="answer-section">
         {answers2.length === 0 ? (

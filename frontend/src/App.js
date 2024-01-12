@@ -28,10 +28,10 @@ function App() {
     return (
         <BrowserRouter>
         <Routes>
-                <Route path="/" element={<Personal socket={socket} />} />
-                <Route path="/:room" element={<Personal socket={socket} params={params}/>} />
-                <Route path="/shared" element={<Lobby socket={socket} />} />
-                <Route path="/shared/:room" element={<Lobby socket={socket} params={params} />}/>
+                <Route path="/p" element={<Personal socket={socket} />} />
+                <Route path="/p/:room" element={<Personal socket={socket} params={params}/>} />
+                <Route path="/" element={<Lobby socket={socket} />} />
+                <Route path="/:room" element={<Lobby socket={socket} params={params} />}/>
         </Routes>
         </BrowserRouter>
         )

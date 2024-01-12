@@ -32,7 +32,7 @@ function Lobby(props) {
 
         props.socket.on("send_RoomCode", (data) => {
             setRoomCode(data.roomCode);
-            setQrUrl("game.tbape.net/" + data.roomCode);
+            setQrUrl("game.tbape.net/p/" + data.roomCode);
         });
 
         props.socket.on("updatePlayers", (data) => {
@@ -76,7 +76,7 @@ function Lobby(props) {
         });
     }, [props.socket]);
     useEffect(() => {
-        window.history.replaceState(null, "New Page Title", "/shared/" + roomCode);
+        window.history.replaceState(null, "New Page Title",  roomCode);
     }, [roomCode]);
 
     return (
@@ -107,6 +107,7 @@ function Lobby(props) {
                                 viewBox={`0 0 256 256`}
                              />
                              <div className="room-info">
+                             <h1>Scan the QR-Code<br></br> or go to <br></br> game.tbape.net/p</h1>
                              <h2>Room Code:</h2>
                             <h1 className="room-code">{roomCode}</h1>
                             </div>
