@@ -1,20 +1,34 @@
 ﻿import React, { useEffect, useState } from "react";
 import './gameS.css';
 
+import answeredSound from '../sounds/answer.wav'; // replace with the actual path
+
+import answered2Sound from '../sounds/answer2.wav'; // replace with the actual path
+
 function GameS(props) {
     const [answeredPlayers, setAnsweredPlayers] = useState([]);
     const [answered2Players, setAnswered2Players] = useState([]);
     const [showChooseAnswerText, setShowChooseAnswerText] = useState(true);
 
+    const playAnsweredSound = () => {
+        const audio = new Audio(answeredSound);
+        audio.play();
+    };
+    const playAnswered2Sound = () => {
+        const audio = new Audio(answered2Sound);
+        audio.play();
+    };
     useEffect(() => {
         const handleAnswered = (data) => {
             console.log("data received: ", data);
             setAnsweredPlayers((prevAnsweredPlayers) => [...prevAnsweredPlayers, data.player]);
+            playAnsweredSound(); // Play sound when player answers
         };
 
         const handleAnswered2 = (data) => {
             console.log("data received: ", data);
             setAnswered2Players((prevAnswered2Players) => [...prevAnswered2Players, data.player]);
+            playAnswered2Sound(); // Play sound when player answers
         };
 
         props.socket.on("answered", handleAnswered);
