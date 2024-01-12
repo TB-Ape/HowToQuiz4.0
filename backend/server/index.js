@@ -277,7 +277,7 @@ async function getArticleById(articleId) {
       }
   
       // Find the article by ObjectId
-      const article = await Article.findById(articleId);
+      const article = await articleModel.findById(articleId);
   
       if (!article) {
         throw new Error('Article not found');
@@ -433,9 +433,10 @@ function handleConnection(socket){
             }
             else {
                 const playerAnswers = await room.playerAnswers;
+                socket.to(data.roomCode).emit("playerAnswers",{playerAnswers: playerAnswers});
                 socket.to(data.roomCode).emit("roundOver",{roundResults: roundResults});
                 socket.emit("roundOver",{roundResults: roundResults});
-                socket.to(data.roomCode).emit("playerAnswers",{playerAnswers: playerAnswers});
+
             }
         }
         socket.to(data.roomCode).emit("answered2",{player: data.player});

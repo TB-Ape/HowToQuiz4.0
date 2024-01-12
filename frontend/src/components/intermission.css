@@ -39,4 +39,13 @@
   padding: 20px;
 }
 
+.player-item.intermission{
+    background-color: #4CAF50; /* Change to green for answered players */
+     animation: lastpulse 1s;
+}
 
+/* Add this to your existing CSS or modify it accordingly */
+.answer-item {
+    margin-top: 10px;
+    color: #fff;
+  }

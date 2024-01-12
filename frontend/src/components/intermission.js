@@ -14,7 +14,8 @@ function Intermission({ socket, players, roundResults, image, playerAnswers }) {
       <ul className="player-list">
         {players.map((player, index) => (
           <li key={index} className="player-item intermission">
-            {player.isHost && '👑'} {player.username} - {player.score} - Answer: {getPlayerAnswer(player._id)}
+            {player.isHost && '👑'} {player.username} - {player.score}
+            <div className="answer-item">{getPlayerAnswer(player._id)}</div>
           </li>
         ))}
       </ul>

@@ -61,7 +61,7 @@ function Lobby(props) {
             setRoundResults(data.roundResults);
         });
         props.socket.on("playerAnswers", (data) => {
-            setPlayerAnswers(data.userAnswers);
+            setPlayerAnswers(data.playerAnswers);
         });
         props.socket.on("roundStart", (data) => {
             setIntermission(false);
