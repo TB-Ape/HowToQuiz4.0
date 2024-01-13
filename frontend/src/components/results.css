@@ -1,0 +1,76 @@
+.results-section {
+    text-align: center;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #4CAF50; /* Light background color similar to Wikihow */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Light shadow for contrast */
+    color: #222; /* Dark text color for contrast */
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 28px;
+    color: #808080; /* Blue accent color similar to Wikihow */
+}
+
+.game-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Slightly more pronounced shadow for image */
+}
+
+.player-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    left: 0;
+    top: 25%;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    padding: 20px;
+}
+
+.player-item.results {
+    background-color: #4CAF50; /* Change to green for answered players */
+    animation: lastpulse 1s;
+}
+
+/* Add this to your existing CSS or modify it accordingly */
+.answer-item {
+    margin-top: 10px;
+    color: #fff;
+}
+
+.show-animation {
+    animation: showAnimation 1s;
+    font-size: 14px;
+}
+
+@keyframes showAnimation {
+    0% {
+        transform: scale(1);
+        font-size: 14px;
+    }
+    50% {
+        transform: scale(2);
+        font-size: 14px;
+    }
+    100% {
+        transform: scale(1);
+        font-size: 14px;
+    }
+}
+
+.animation-text {
+    color: #ffcc00; /* Customize the color of the animation text */
+    font-size: 14px; /* Start with font-size 0 */
+}
