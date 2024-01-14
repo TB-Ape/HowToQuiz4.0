@@ -1,6 +1,5 @@
 ﻿import React, { useEffect, useState } from "react";
 import "./results.css"; // Add your CSS file for styling if needed
-import { Fireworks } from 'fireworks/lib/react'
 
 
 
