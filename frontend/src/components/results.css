@@ -25,14 +25,15 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Slightly more pronounced shadow for image */
 }
 
-.player-list {
+.player-list-results {
+    text-align: center;
+    margin: auto;
+    margin-top: 20px;
+    padding: 20px;
+    max-width: 600px;
     list-style-type: none;
-    padding: 0;
-    margin: 0;
-    position: fixed;
-    left: 0;
-    top: 25%;
-    transform: translateY(-50%);
+    padding: 20;
+    margin: 20;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     color: #fff;
@@ -68,9 +69,4 @@
         transform: scale(1);
         font-size: 14px;
     }
-}
-
-.animation-text {
-    color: #ffcc00; /* Customize the color of the animation text */
-    font-size: 14px; /* Start with font-size 0 */
 }

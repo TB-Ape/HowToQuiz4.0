@@ -1,10 +1,9 @@
-// Intermission.js
-
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./intermission.css";
 
-function Intermission({ socket, players, roundResults, image, playerAnswers }) {
+function Intermission({ socket, players, roundResults, image, playerAnswers, currentRound, rounds, gameOver }) {
   const [animatedScores, setAnimatedScores] = useState([...players.map(player => player.score)]);
+  const [winnerIndex, setWinnerIndex] = useState(null);
 
   const getPlayerAnswer = (playerId) => {
     const answerObject = playerAnswers.find((answer) => answer.player === playerId);
@@ -41,15 +40,35 @@ function Intermission({ socket, players, roundResults, image, playerAnswers }) {
     };
   }, [roundResults, players]);
 
+  useEffect(() => {
+    if (gameOver) {
+      const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
+      const winner = sortedPlayers[0];
+      const winnerIndex = players.findIndex(player => player._id === winner._id);
+      setWinnerIndex(winnerIndex);
+    }
+  }, [gameOver, players]);
+
   return (
     <div className="intermission-section">
+      <div className="round-container">
+        <div className="round-counter">Round: {currentRound}/{rounds}</div>
+      </div>
       <ul className="player-list">
         {players.map((player, index) => {
           const matchingResults = roundResults.filter((result) => result.player._id === player._id);
           const animationClass = matchingResults.length ? "show-animation" : "";
+          const winnerClass = gameOver && index === winnerIndex ? "winner" : "";
 
           return (
-            <li key={index} className="player-item intermission">
+            <li key={index} className={`player-item intermission ${winnerClass}`}>
+              {gameOver && (
+                <>
+                  {index < 3 && index === 0 && '🥇'}
+                  {index < 3 && index === 1 && '🥈'}
+                  {index < 3 && index === 2 && '🥉'}
+                </>
+              )}
               {player.isHost && '👑'} {player.username} - {Math.round(animatedScores[index])}
               <div className="answer-item">{getPlayerAnswer(player._id)}</div>
               {matchingResults.length > 0 && (
@@ -63,7 +82,7 @@ function Intermission({ socket, players, roundResults, image, playerAnswers }) {
           );
         })}
       </ul>
-      <h1 className="round-results">Round Results</h1>
+      <h1 className="round-results">{gameOver ? "GAME OVER" : "ROUND RESULTS"}</h1>
       <h2>{roundResults[0].correctAnswer}</h2>
       <div className="game-image">
         <img className="game-image" src={image} alt="Game Screen" />

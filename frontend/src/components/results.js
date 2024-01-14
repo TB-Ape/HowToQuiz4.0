@@ -5,24 +5,15 @@ import { Fireworks } from 'fireworks/lib/react'
 
 
 function Results(props) {
-    let fxProps = {
-        count: 3,
-        interval: 200,
-        canvasWidth: 400,
-        canvasHeight: 400,
-        colors: ['#cc3333', '#4CAF50', '#81C784'],
-        calc: (props, i) => ({
-          ...props,
-          x: (i + 1) * (window.innerWidth / 3) - (i + 1) * 100,
-          y: 200 + Math.random() * 100 - 50 + (i === 2 ? -80 : 0)
-        })
-    }
   const sortedPlayers = props.players.slice().sort((a, b) => b.score - a.score);
   return (
+    <div>
     <div className="results-section">
-        <Fireworks {...fxProps} />
       <h2>GAME OVER</h2>
-      <ul className="player-list">
+      
+    </div>
+    
+    <ul className="player-list-results">
         {sortedPlayers.map((player, index) => (
           <li key={index} className="player-item results">
             {index < 3 && index === 0 && "🥇"}

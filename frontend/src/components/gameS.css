@@ -63,6 +63,7 @@
 }
 
 .game-screen-section {
+    transform: translateY(+5%);
     text-align: center;
     max-width: 600px;
     margin: auto;

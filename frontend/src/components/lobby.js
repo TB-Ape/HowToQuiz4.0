@@ -17,6 +17,8 @@ function Lobby(props) {
     const [roundResults,setRoundResults] = useState([]);
     const [playerAnswers, setPlayerAnswers] = useState([]);
     const [image, setImage] = useState("");
+    const [currentRound, setCurrentRound] = useState('');
+    const [rounds, setRounds] = useState('');
     function getRoomId() {
         setRoomCode(params.room);
         setQrUrl("game.tbape.net/" + roomCode);
@@ -29,7 +31,11 @@ function Lobby(props) {
 
     useEffect(() => {
         getRoomId();
-
+        const setRoundCount = (data) => {
+            console.log("RoundCount received:", data);
+            setCurrentRound(data.currentRound);
+            setRounds(data.rounds);
+        };
         props.socket.on("send_RoomCode", (data) => {
             setRoomCode(data.roomCode);
             setQrUrl("game.tbape.net/p/" + data.roomCode);
@@ -69,6 +75,7 @@ function Lobby(props) {
         props.socket.on("nextRound",(data) =>{
             setIntermission(false);
         })
+        props.socket.on("RoundCount", setRoundCount);
     }, []);
     useEffect(() => {
         props.socket.on("image", (data) => {
@@ -117,12 +124,12 @@ function Lobby(props) {
                     </div>
             ) : (
                 intermission ? (
-                    <Intermission socket={props.socket} players={playerList} roundResults ={roundResults} image={image} playerAnswers ={playerAnswers} />
+                    <Intermission socket={props.socket} players={playerList} roundResults ={roundResults} image={image} playerAnswers ={playerAnswers} currentRound = {currentRound} rounds = {rounds} gameOver={gameOver}/>
                 ) : (
                     gameOver ? (
-                        <Result socket={props.socket} players={playerList} />
+                        <Intermission socket={props.socket} players={playerList} roundResults ={roundResults} image={image} playerAnswers ={playerAnswers} currentRound = {currentRound} rounds = {rounds} gameOver={gameOver}/>
                     ) : (
-                        <GameS socket={props.socket} players={playerList} image={image}/>
+                        <GameS socket={props.socket} players={playerList} image={image} currentRound = {currentRound} rounds = {rounds}/>
                     )
                 )
             )

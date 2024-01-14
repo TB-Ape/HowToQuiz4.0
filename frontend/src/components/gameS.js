@@ -20,13 +20,13 @@ function GameS(props) {
     };
     useEffect(() => {
         const handleAnswered = (data) => {
-            console.log("data received: ", data);
+            console.log("answer received: ", data);
             setAnsweredPlayers((prevAnsweredPlayers) => [...prevAnsweredPlayers, data.player]);
             playAnsweredSound(); // Play sound when player answers
         };
 
         const handleAnswered2 = (data) => {
-            console.log("data received: ", data);
+            console.log("answer2 received: ", data);
             setAnswered2Players((prevAnswered2Players) => [...prevAnswered2Players, data.player]);
             playAnswered2Sound(); // Play sound when player answers
         };
@@ -66,6 +66,9 @@ function GameS(props) {
                     </li>
                 ))}
             </ul>
+            <div className="round-container">
+                <div className="round-counter">Round: {props.currentRound}/{props.rounds}</div>
+            </div>
             <div className="game-screen-section">
                 <div className="section-header">
                     <h2 className="section-title">WIKIHOW GAME</h2>
@@ -73,7 +76,7 @@ function GameS(props) {
                 <div className="game-image">
                     <img className="game-image" src={props.image} alt="Game Screen" />
                     <h2 className={`instruction ${showChooseAnswerText ? "choose-answer" : "type-answer"}`}>
-                        {showChooseAnswerText ?  "Type your answer on your device":"Choose an answer on your device"}
+                        {showChooseAnswerText ? "Type your answer on your device" : "Choose an answer on your device"}
                     </h2>
                 </div>
             </div>

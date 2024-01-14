@@ -101,7 +101,7 @@ async function prepareNewRound(socket,roomCode) {
     room.currentRound = room.currentRound + 1;
     await room.save();
     socket.to(roomCode).emit("image", { image: article.image });
-    
+    socket.to(roomCode).emit("RoundCount",{currentRound:room.currentRound,rounds: room.rounds})
    //sendFormularToPersonalScreen
 }
 
@@ -428,6 +428,8 @@ function handleConnection(socket){
             socket.to(data.roomCode).emit("updatePlayers", { players: Players });
             if (room.rounds == room.currentRound) {
                 console.log("GAME OVER");
+                socket.to(data.roomCode).emit("roundOver",{roundResults: roundResults});
+                socket.emit("roundOver",{roundResults: roundResults});
                 socket.to(data.roomCode).emit("gameOver");
                 socket.emit("gameOver");
                 

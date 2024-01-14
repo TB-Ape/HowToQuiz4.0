@@ -43,7 +43,6 @@
     background-color: #4CAF50; /* Change to green for answered players */
      animation: lastpulse 1s;
 }
-
 /* Add this to your existing CSS or modify it accordingly */
 .answer-item {
     margin-top: 10px;
@@ -51,10 +50,25 @@
   }
 
 .show-animation {
+    color: #01d9ff; /* Customize the color of the animation text */
     animation: showAnimation 1s;
     font-size: 14px; 
 }
-
+.player-item.intermission.winner {
+    animation: winnerAnimation 2s infinite;
+  }
+  
+  @keyframes winnerAnimation {
+    0% {
+      transform: scale(1) ;
+    }
+    50% {
+      transform: scale(2);
+    }
+    100% {
+      transform: scale(1) ;
+    }
+  }
 @keyframes showAnimation {
     0% {
         transform: scale(1);
@@ -62,15 +76,17 @@
     }
     50% {
         transform: scale(2);
+
         font-size: 14px;
     }
     100% {
         transform: scale(1);
+
         font-size: 14px;
     }
 }
 
 .animation-text {
-    color: #ffcc00; /* Customize the color of the animation text */
+    color: #373838; /* Customize the color of the animation text */
     font-size: 14px; /* Start with font-size 0 */
 }
