@@ -14,9 +14,17 @@ function Intermission({ socket, players, roundResults, image, playerAnswers, cur
     const animationDuration = 1000; // Adjust as needed
     const interval = 50; // Adjust as needed
     const steps = animationDuration / interval;
-
+    setAnimatedScores((prevScores) =>
+      
+        prevScores.map((score, index) => {
+          const matchingResults = roundResults.filter((result) => result.player._id === players[index]._id);
+          const totalPoints = matchingResults.reduce((sum, result) => sum + result.points, 0);
+          return score - totalPoints;
+        })
+      );
     const updateScores = () => {
       setAnimatedScores((prevScores) =>
+      
         prevScores.map((score, index) => {
           const matchingResults = roundResults.filter((result) => result.player._id === players[index]._id);
           const totalPoints = matchingResults.reduce((sum, result) => sum + result.points, 0);

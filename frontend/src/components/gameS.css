@@ -4,31 +4,7 @@
 
 
 
-.player-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    position: fixed;
-    left: 0;
-    top: 25%;
-    transform: translateY(-50%);
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    color: #fff;
-    padding: 20px;
-}
 
-.player-item {
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #fff;
-    background-color: #b9b9b9;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    border-radius: 10px;
-    transition: background-color 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Dramatic bounce effect */
-    animation: pulse 1s infinite; /* Pulse animation */
-}
 
 @keyframes pulse {
     0% {
