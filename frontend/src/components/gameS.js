@@ -6,6 +6,7 @@ import answeredSound from '../sounds/answer.wav'; // replace with the actual pat
 import answered2Sound from '../sounds/answer2.wav'; // replace with the actual path
 
 function GameS(props) {
+    const sortedPlayers = [...props.players].sort((a, b) => b.score - a.score);
     const [answeredPlayers, setAnsweredPlayers] = useState([]);
     const [answered2Players, setAnswered2Players] = useState([]);
     const [showChooseAnswerText, setShowChooseAnswerText] = useState(true);
@@ -57,7 +58,7 @@ function GameS(props) {
     return (
         <div className="game-container">
             <ul className="player-list">
-                {props.players.map((player, index) => (
+                {sortedPlayers.map((player, index) => (
                     <li
                         key={index}
                         className={`player-item ${answeredPlayers.some(answeredPlayer => answeredPlayer.socketId === player.socketId) ? "answered" : ""} ${answered2Players.some(answered2Player => answered2Player.socketId === player.socketId) ? "answered2" : ""}`}
