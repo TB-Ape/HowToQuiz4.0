@@ -67,7 +67,6 @@ ul li {
 }
 
 .player-list {
-    list-style-type: none;
     padding: 0;
     margin: 0;
     position: fixed;
@@ -75,12 +74,19 @@ ul li {
     top: 50%;
     transform: translateY(-50%);
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    color: #fff;
+    box-shadow: 0 0 20px rgba(128, 128, 128, 0.1);
+    color: #ffffff;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust the width of the columns as needed */
+  grid-gap: 20px; /* Adjust the gap between items as needed */
+}
+
+@media screen and (max-height: 600px) {
+  .player-list {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust column width for smaller height */
   }
+}
   
   .player-item {
     margin-bottom: 10px;

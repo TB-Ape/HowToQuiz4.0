@@ -5,14 +5,12 @@ function Intermission({ socket, players, roundResults, image, playerAnswers, cur
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
   const [animatedScores, setAnimatedScores] = useState([...sortedPlayers.map(player => player.score)]);
   const [winnerIndex, setWinnerIndex] = useState(null);
+  const [numColumns, setNumColumns] = useState(3); // Initial number of columns
 
   const getPlayerAnswer = (playerId) => {
     const answerObject = playerAnswers.find((answer) => answer.player === playerId);
     return answerObject ? answerObject.answer : "";
   };
-
-  // Declare sortedPlayers here
-
 
   useEffect(() => {
     const animationDuration = 1000; // Adjust as needed
@@ -58,12 +56,28 @@ function Intermission({ socket, players, roundResults, image, playerAnswers, cur
     }
   }, [gameOver, players, sortedPlayers]);
 
+  useEffect(() => {
+    // Calculate number of columns based on viewport height
+    const calculateColumns = () => {
+      const numPlayers = sortedPlayers.length;
+      const windowHeight = window.innerHeight;
+      const listItemHeight = 150; // Adjust as needed
+      const maxColumns = Math.ceil(numPlayers / Math.floor(windowHeight / listItemHeight));
+      setNumColumns(Math.min(maxColumns, numPlayers)); // Ensure number of columns doesn't exceed number of players
+    };
+
+    calculateColumns(); // Calculate columns initially
+    window.addEventListener("resize", calculateColumns); // Recalculate on window resize
+    return () => window.removeEventListener("resize", calculateColumns); // Cleanup
+
+  }, [sortedPlayers]);
+
   return (
     <div className="intermission-section">
       <div className="round-container">
         <div className="round-counter">Round: {currentRound}/{rounds}</div>
       </div>
-      <ul className="player-list">
+      <ul className="player-list" style={{ gridTemplateColumns: `repeat(${numColumns}, 1fr)` }}>
         {sortedPlayers.map((player, index) => {
           const matchingResults = roundResults.filter((result) => result.player._id === player._id);
           const animationClass = matchingResults.length ? "show-animation" : "";

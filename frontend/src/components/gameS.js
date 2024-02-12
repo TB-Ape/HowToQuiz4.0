@@ -6,10 +6,10 @@ import answeredSound from '../sounds/answer.wav'; // replace with the actual pat
 import answered2Sound from '../sounds/answer2.wav'; // replace with the actual path
 
 function GameS(props) {
-    const sortedPlayers = [...props.players].sort((a, b) => b.score - a.score);
     const [answeredPlayers, setAnsweredPlayers] = useState([]);
     const [answered2Players, setAnswered2Players] = useState([]);
     const [showChooseAnswerText, setShowChooseAnswerText] = useState(true);
+    const [numColumns, setNumColumns] = useState(3); // Initial number of columns
 
     const playAnsweredSound = () => {
         const audio = new Audio(answeredSound);
@@ -55,10 +55,26 @@ function GameS(props) {
         setShowChooseAnswerText(answered2Players.length !== props.players.length);
     }, [answered2Players, props.players]);
 
+    useEffect(() => {
+        // Calculate number of columns based on viewport height
+        const calculateColumns = () => {
+            const numPlayers = props.players.length; // Use props.players.length instead of sortedPlayers.length
+            const windowHeight = window.innerHeight;
+            const listItemHeight = 100; // Adjust as needed
+            const maxColumns = Math.ceil(numPlayers / Math.floor(windowHeight / listItemHeight));
+            setNumColumns(Math.min(maxColumns, numPlayers)); // Ensure number of columns doesn't exceed number of players
+        };
+
+        calculateColumns(); // Calculate columns initially
+        window.addEventListener("resize", calculateColumns); // Recalculate on window resize
+        return () => window.removeEventListener("resize", calculateColumns); // Cleanup
+
+    }, [props.players]);
+
     return (
         <div className="game-container">
-            <ul className="player-list">
-                {sortedPlayers.map((player, index) => (
+            <ul className="player-list" style={{ gridTemplateColumns: `repeat(${numColumns}, 1fr)` }}>
+                {props.players.map((player, index) => (
                     <li
                         key={index}
                         className={`player-item ${answeredPlayers.some(answeredPlayer => answeredPlayer.socketId === player.socketId) ? "answered" : ""} ${answered2Players.some(answered2Player => answered2Player.socketId === player.socketId) ? "answered2" : ""}`}
