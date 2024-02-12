@@ -27,6 +27,7 @@ function Login(props) {
                     value={props.username}
                     onChange={(e) => props.setUserName(e.target.value)}
                     placeholder="Enter your username"
+                    maxLength="10"
                 />
             </div>
             <div className="form-group">
