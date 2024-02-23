@@ -15,6 +15,7 @@ mongoose.connect("mongodb://localhost:27017/wikihow2", {
 const roomModel = require("../models/room");
 const articleModel = require("../models/article");
 const playerSchema= require("../models/player");
+const { platform } = require("os");
 
 const playerModel = mongoose.model('player', playerSchema.schema);
 var Rounds = 5;
@@ -52,11 +53,23 @@ async function insertNewPlayer(Username,socketid) {
     return await newPlayer.save();  
 }
 async function removePlayerbyS(socketid) {
-    Player = await playerModel.deleteOne({ socketId: socketid });
-    Rooms = await roomModel.find({ "players.socketId": socketid });
+    Player = await playerModel.findOne({socketId: socketid});
+    if(Player){
+    delplayer = await playerModel.deleteOne({ socketId: socketid });
+    Rooms = await roomModel.find({ "players": { $in: [Player._id] } });
     for (const Room of Rooms) {
-        Room.players.pull({ socketId: socketid });
+        Room.players.pull(Player._id); // Use Player._id directly
+        await Room.save(); // Save the modified room
     }
+    if(Rooms.length >= 1){
+        return Rooms[0].roomCode;
+    }
+    else
+    {
+        return null;
+    }
+}
+return null;
 }
 async function getPlayersUsernames(roomCode) {
     var room = await getRoom(roomCode);
@@ -397,9 +410,18 @@ function handleConnection(socket){
         }
     });
 
-    socket.on('disconnect', () => {
-     //   removePlayerbyS(socket.id);
+    socket.on('disconnect', async() => {
+        var Players;
         console.log(`🔥: ${socket.id} disconnected`);
+        roomCode = await removePlayerbyS(socket.id);
+        if(roomCode != null)
+        {
+            Players = await getPlayers(roomCode);
+            socket.to(roomCode).emit("updatePlayers", { players: Players });
+        }
+        
+        
+       
     });
     socket.on("Answer", async (data) => {
         console.log("Answer:", data);
